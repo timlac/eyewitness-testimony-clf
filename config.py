@@ -1,4 +1,6 @@
-ROOT_DIR = "/home/tim/work/witness-project-pg/eyewitness-testimony-clf"
+import os 
+
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 AUDIO_VISUALIZATION_COLS = [
     'F0semitoneFrom27.5Hz_sma3nz_amean',
