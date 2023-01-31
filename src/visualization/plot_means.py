@@ -45,4 +45,5 @@ def main():
     plot_means_and_stds(x_normalized, y, AUDIO_VISUALIZATION_COLS, "post")
 
 
-main()
+if __name__ == "__main__":
+    main()
