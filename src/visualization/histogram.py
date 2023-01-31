@@ -1,4 +1,3 @@
-
 import matplotlib.pyplot as plt
 import os
 
@@ -23,3 +22,6 @@ def plot_hist(y, title):
     plt.ylabel('Count')
     plt.title('Distrbution ' + title)
     plt.show()
+
+
+
