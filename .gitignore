@@ -1,3 +1,8 @@
+
+
+
 venv
 files/data/opensmile_functionals.csv
 files/data/.~lock.opensmile_functionals.csv#
+
+files/out/*.json

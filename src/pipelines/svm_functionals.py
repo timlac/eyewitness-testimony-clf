@@ -28,14 +28,16 @@ x = functional_normalize_by(x, participant, method="min_max")
 
 plot_means_and_stds(x, y, AUDIO_VISUALIZATION_COLS, "post")
 
-ps = ParamSearch(mock=True)
-
-clf = ps.param_search(x, y)
 
 params_path = os.path.join(output_data, "best_params.json")
-with open(params_path, "w") as outfile:
-    # writing to json file
-    json.dump(clf.best_params_, outfile)
+
+# ps = ParamSearch(mock=True)
+#
+# clf = ps.param_search(x, y)
+#
+# with open(params_path, "w") as outfile:
+#     # writing to json file
+#     json.dump(clf.best_params_, outfile)
 
 with open(params_path, 'r') as openfile:
     # Reading from json file
