@@ -1,1 +1,1 @@
-{"C": 5, "class_weight": "balanced", "gamma": 1, "kernel": "rbf"}
+{"C": 10, "class_weight": "balanced", "gamma": 0.01, "kernel": "poly"}
