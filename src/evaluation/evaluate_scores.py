@@ -1,13 +1,16 @@
 from sklearn.model_selection import cross_validate
 import numpy as np
+from src.utils.get_splits import get_splits
 
 
-def evaluate_scores(x, y, clf, splits, scoring_method):
+def evaluate_scores(x, y, clf, scoring_method):
+
+    splits = get_splits(x, y)
+
     # get scores
     scores = cross_validate(X=x, y=y,
                             estimator=clf,
                             scoring=[scoring_method],
-                            verbose=1,
                             cv=splits,
                             n_jobs=-1,
                             return_train_score=True

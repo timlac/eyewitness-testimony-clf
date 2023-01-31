@@ -2,7 +2,6 @@ import os
 import json
 import numpy as np
 
-from sklearn import metrics
 
 import pandas as pd
 from sklearn.svm import SVC
@@ -16,6 +15,7 @@ from src.evaluation.classification_report import create_classification_report
 from src.learning.parameter_tuning import ParamSearch
 
 
+from sklearn import metrics
 from sklearn.model_selection import cross_val_predict
 
 from src.visualization.histogram import plot_hist
@@ -55,17 +55,16 @@ with open(params_path, 'r') as openfile:
 
 
 ### Evaluation
-splits = get_splits(x, y)
-
 print(best_params)
 svc = SVC(**best_params)
+# splits = get_splits(x, y)
 # evaluate_scores(x=x,
 #                 y=y,
 #                 clf=svc,
 #                 splits=splits,
 #                 scoring_method="accuracy")
 
-
+splits = get_splits(x, y)
 y_pred = cross_val_predict(svc, x, y, cv=splits)
 
 plot_hist(y_pred, "predictions")
