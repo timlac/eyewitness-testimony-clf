@@ -35,9 +35,7 @@ class ConfusionMatrixCreator:
 
 
 def plot_conf_mat(cm):
-    categories = ["Accurate", "Not Accurate"]
-    disp = ConfusionMatrixDisplay(confusion_matrix=cm,
-                                  display_labels=categories)
+    disp = ConfusionMatrixDisplay(confusion_matrix=cm)
     disp.plot()
     plt.subplots_adjust(bottom=.25, left=.25)
 

@@ -43,7 +43,7 @@ params_path = os.path.join(output_data, "best_params.json")
 
 ps = ParamSearch(mock=True)
 
-clf = ps.param_search(x, y)
+clf = ps.param_search(x, y, scoring="roc_auc")
 
 with open(params_path, "w") as outfile:
     # writing to json file
@@ -72,13 +72,14 @@ plot_hist(y_pred, "predictions")
 report = metrics.classification_report(y_true=y, y_pred=y_pred)
 
 print(report)
+splits = get_splits(x, y)
 
-# conf_mat_creator = ConfusionMatrixCreator(clf=svc)
-# conf_mat = conf_mat_creator.calculate_avg_conf_matrix(x, y, splits)
-#
-# print(conf_mat)
-#
-# plot_conf_mat(conf_mat)
+conf_mat_creator = ConfusionMatrixCreator(clf=svc)
+conf_mat = conf_mat_creator.calculate_avg_conf_matrix(x, y, splits)
+
+print(conf_mat)
+
+plot_conf_mat(conf_mat)
 
 
 
