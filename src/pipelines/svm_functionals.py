@@ -13,6 +13,7 @@ from src.visualization.plot_means import plot_means_and_stds
 from src.visualization.confusion_matrix import ConfusionMatrixCreator, plot_conf_mat
 from src.evaluation.classification_report import create_classification_report
 from src.learning.parameter_tuning import ParamSearch
+from src.visualization.prec_recall_curve import plot_prec_recall_curve
 
 
 from sklearn import metrics
@@ -30,7 +31,7 @@ y = df["Accuracy"].values
 x = df[AUDIO_FUNCTIONALS_EGEMAPS_COLS].values
 participant = df["Participant"].values
 
-plot_hist(y, "labels")
+# plot_hist(y, "labels")
 
 
 # plot_means_and_stds(x, y, AUDIO_VISUALIZATION_COLS, "pre")
@@ -41,13 +42,13 @@ x = functional_normalize_by(x, participant, method="min_max")
 
 params_path = os.path.join(output_data, "best_params.json")
 
-ps = ParamSearch(mock=True)
-
-clf = ps.param_search(x, y, scoring="roc_auc")
-
-with open(params_path, "w") as outfile:
-    # writing to json file
-    json.dump(clf.best_params_, outfile)
+# ps = ParamSearch(mock=True)
+#
+# clf = ps.param_search(x, y, scoring="roc_auc")
+#
+# with open(params_path, "w") as outfile:
+#     # writing to json file
+#     json.dump(clf.best_params_, outfile)
 
 with open(params_path, 'r') as openfile:
     # Reading from json file
@@ -56,7 +57,7 @@ with open(params_path, 'r') as openfile:
 
 ### Evaluation
 print(best_params)
-svc = SVC(**best_params)
+svc = SVC(**best_params, probability=True)
 # splits = get_splits(x, y)
 # evaluate_scores(x=x,
 #                 y=y,
@@ -64,22 +65,26 @@ svc = SVC(**best_params)
 #                 splits=splits,
 #                 scoring_method="accuracy")
 
-splits = get_splits(x, y)
-y_pred = cross_val_predict(svc, x, y, cv=splits)
 
-plot_hist(y_pred, "predictions")
+plot_prec_recall_curve(svc, x, y)
 
-report = metrics.classification_report(y_true=y, y_pred=y_pred)
-
-print(report)
-splits = get_splits(x, y)
-
-conf_mat_creator = ConfusionMatrixCreator(clf=svc)
-conf_mat = conf_mat_creator.calculate_avg_conf_matrix(x, y, splits)
-
-print(conf_mat)
-
-plot_conf_mat(conf_mat)
+#
+# splits = get_splits(x, y)
+# y_pred = cross_val_predict(svc, x, y, cv=splits)
+#
+# plot_hist(y_pred, "predictions")
+#
+# report = metrics.classification_report(y_true=y, y_pred=y_pred)
+#
+# print(report)
+# splits = get_splits(x, y)
+#
+# conf_mat_creator = ConfusionMatrixCreator(clf=svc)
+# conf_mat = conf_mat_creator.calculate_avg_conf_matrix(x, y, splits)
+#
+# print(conf_mat)
+#
+# plot_conf_mat(conf_mat)
 
 
 
