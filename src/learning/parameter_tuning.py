@@ -8,9 +8,18 @@ class ParamSearch:
     # regularization parameter, lower C -> more regularization,
     # large C -> less regularization
     parameters = {
-        'class_weight': ['balanced'],
+        'class_weight': [None,
+                         'balanced',
+                         {0: 0.1, 1: .9},
+                         {0: 0.3, 1: 0.7},
+                         {0: 0.5, 1: 0.5},
+                         {0: 0.7, 1: 0.3},
+                         {0: 0.1, 1: 0.9}],
+
         "C": [0.1, 1, 5, 10, 25, 50, 75, 100],
+
         "gamma": [1, 0.1, 0.01, 0.001, 0.0001],
+
         "kernel": ['rbf', 'linear', 'poly', 'sigmoid']
     }
 
@@ -33,7 +42,7 @@ class ParamSearch:
         svc = SVC()
         clf = GridSearchCV(estimator=svc,
                            param_grid=self.parameter_set,
-                           scoring='accuracy',
+                           scoring='roc_auc',
                            verbose=5,
                            cv=skf.split(x, y),
                            n_jobs=-1,
