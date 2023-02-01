@@ -7,7 +7,7 @@ import numpy as np
 from src.utils.get_splits import get_splits
 
 
-def plot_prec_recall_curve(clf, x, y):
+def plot_prec_recall_curve(clf, x, y, pos_label=1):
     precisions = []
     recalls = []
 
@@ -18,7 +18,7 @@ def plot_prec_recall_curve(clf, x, y):
         y_train, y_test = y[train_index], y[test_index]
         clf.fit(X_train, y_train)
         y_score = clf.decision_function(X_test)
-        precision, recall, _ = precision_recall_curve(y_test, y_score, pos_label=0)
+        precision, recall, _ = precision_recall_curve(y_test, y_score, pos_label=pos_label)
 
         mean_recall = np.linspace(1, 0, 100)
         precision_interp = np.interp(mean_recall, np.flip(recall), np.flip(precision))
@@ -35,6 +35,7 @@ def plot_prec_recall_curve(clf, x, y):
     plt.ylabel('Precision')
     plt.ylim([0.0, 1.05])
     plt.xlim([0.0, 1.0])
+    plt.title("2-class Precision-Recall curve with {} as positive label".format(pos_label))
     plt.show()
 
 
