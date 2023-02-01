@@ -1,4 +1,4 @@
-from sklearn.metrics import precision_recall_curve, roc_auc_score, roc_curve
+from sklearn.metrics import precision_recall_curve, roc_auc_score, roc_curve, average_precision_score, auc
 from sklearn.model_selection import cross_val_predict
 import matplotlib.pyplot as plt
 import numpy as np
@@ -8,17 +8,33 @@ from src.utils.get_splits import get_splits
 
 
 def plot_prec_recall_curve(clf, x, y):
-    # Use cross_val_predict to predict the scores for each sample
-    y_scores = cross_val_predict(clf, x, y, cv=5, method='predict_proba')[:, 1]
+    precisions = []
+    recalls = []
 
-    # Compute the precision-recall curve
-    precision, recall, thresholds = precision_recall_curve(y, y_scores)
+    splits = get_splits(x, y)
 
-    # Plot the precision-recall curve
-    plt.plot(recall, precision, label='Precision-Recall Curve')
+    for train_index, test_index in splits:
+        X_train, X_test = x[train_index], x[test_index]
+        y_train, y_test = y[train_index], y[test_index]
+        clf.fit(X_train, y_train)
+        y_score = clf.decision_function(X_test)
+        precision, recall, _ = precision_recall_curve(y_test, y_score, pos_label=0)
+
+        mean_recall = np.linspace(1, 0, 100)
+        precision_interp = np.interp(mean_recall, np.flip(recall), np.flip(precision))
+
+        precisions.append(precision_interp)
+        recalls.append(mean_recall)
+
+    mean_precision = np.mean(precisions, axis=0)
+    mean_recall = np.mean(recalls, axis=0)
+
+    plt.step(mean_recall, mean_precision, color='b', alpha=0.2, where='post')
+    plt.fill_between(mean_recall, mean_precision, step='post', alpha=0.2, color='b')
     plt.xlabel('Recall')
     plt.ylabel('Precision')
-    plt.legend()
+    plt.ylim([0.0, 1.05])
+    plt.xlim([0.0, 1.0])
     plt.show()
 
 
