@@ -28,10 +28,13 @@ output_data = os.path.join(ROOT_DIR, "files/out")
 df = pd.read_csv(input_data, delimiter=";")
 
 y = df["Accuracy"].values
+
+y = 1 - y
+
 x = df[AUDIO_FUNCTIONALS_EGEMAPS_COLS].values
 participant = df["Participant"].values
 
-# plot_hist(y, "labels")
+plot_hist(y, "labels")
 
 
 # plot_means_and_stds(x, y, AUDIO_VISUALIZATION_COLS, "pre")
@@ -69,8 +72,10 @@ svc = SVC(**best_params, probability=True)
 plot_prec_recall_curve(svc, x, y)
 
 #
-# splits = get_splits(x, y)
-# y_pred = cross_val_predict(svc, x, y, cv=splits)
+splits = get_splits(x, y)
+y_pred = cross_val_predict(svc, x, y, cv=splits)
+report = metrics.classification_report(y_true=y, y_pred=y_pred)
+print(report)
 #
 # plot_hist(y_pred, "predictions")
 #

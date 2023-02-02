@@ -1,4 +1,5 @@
-from sklearn.metrics import precision_recall_curve, roc_auc_score, roc_curve, average_precision_score, auc
+from sklearn.metrics import precision_recall_curve, roc_auc_score, roc_curve, average_precision_score, auc, \
+    classification_report
 from sklearn.model_selection import cross_val_predict
 import matplotlib.pyplot as plt
 import numpy as np
@@ -7,9 +8,10 @@ import numpy as np
 from src.utils.get_splits import get_splits
 
 
-def plot_prec_recall_curve(clf, x, y, pos_label=1):
+def plot_prec_recall_curve(clf, x, y):
     precisions = []
     recalls = []
+    threshold_indices = []
 
     splits = get_splits(x, y)
 
@@ -17,17 +19,25 @@ def plot_prec_recall_curve(clf, x, y, pos_label=1):
         X_train, X_test = x[train_index], x[test_index]
         y_train, y_test = y[train_index], y[test_index]
         clf.fit(X_train, y_train)
-        y_score = clf.decision_function(X_test)
-        precision, recall, _ = precision_recall_curve(y_test, y_score, pos_label=pos_label)
 
-        mean_recall = np.linspace(1, 0, 100)
+        y_score = clf.decision_function(X_test)
+        precision, recall, thresholds = precision_recall_curve(y_test, y_score)
+
+        mean_recall = np.linspace(0, 1, 100)
         precision_interp = np.interp(mean_recall, np.flip(recall), np.flip(precision))
+        thresholds_interp = np.interp(mean_recall, np.flip(recall[:-1]), np.flip(thresholds))
+        idx = getnearpos(thresholds_interp, 0)
+        threshold_indices.append(idx)
 
         precisions.append(precision_interp)
         recalls.append(mean_recall)
 
     mean_precision = np.mean(precisions, axis=0)
     mean_recall = np.mean(recalls, axis=0)
+
+    for idx in threshold_indices:
+        # Highlight the threshold by plotting a vertical line
+        plt.axvline(x=mean_recall[idx], color='r', linestyle='--')
 
     plt.step(mean_recall, mean_precision, color='b', alpha=0.2, where='post')
     plt.fill_between(mean_recall, mean_precision, step='post', alpha=0.2, color='b')
@@ -37,6 +47,11 @@ def plot_prec_recall_curve(clf, x, y, pos_label=1):
     plt.xlim([0.0, 1.0])
     plt.title("2-class Precision-Recall curve with {} as positive label".format(pos_label))
     plt.show()
+
+
+def getnearpos(array, value):
+    idx = (np.abs(array-value)).argmin()
+    return idx
 
 
 def plot_auc_curve(svc, x, y):
